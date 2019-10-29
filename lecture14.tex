@@ -1,0 +1,318 @@
+\documentclass[11pt]{article}
+
+\usepackage{fullpage}
+\usepackage{epsfig}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{amsmath}
+\usepackage{xspace}
+\usepackage{theorem}
+\usepackage{tabu,multirow}
+\usepackage{graphicx}
+\usepackage{color} 
+%\usepackage{ulem}
+\usepackage{floatrow}
+\usepackage[labelfont=bf]{caption}
+\captionsetup[table]{position=bottom,name=Figure}
+\captionsetup[subtable]{textfont=it,position=top}
+\newfloatcommand{capbtabbox}{table}[][\FBwidth]
+\usepackage{subcaption}
+\usepackage{enumitem}
+
+
+\makeatletter
+\setlength{\textwidth}{6.5in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\topmargin}{0.25in}
+\setlength{\textheight}{8.25in}
+\setlength{\headheight}{0pt}
+\setlength{\headsep}{0pt}
+\setlength{\marginparwidth}{59pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlength{\theorempreskipamount}{5pt plus 1pt}
+\setlength{\theorempostskipamount}{0pt}
+\setlength{\abovedisplayskip}{8pt plus 3pt minus 6pt}
+
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                 {2ex plus -1ex minus -.2ex}%
+                                 {1.3ex plus .2ex}%
+                                 {\normalfont\Large\bfseries}}%
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                   {1ex plus -1ex minus -.2ex}%
+                                   {1ex plus .2ex}%
+                                   {\normalfont\large\bfseries}}%
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                   {1ex plus -1ex minus -.2ex}%
+                                   {1ex plus .2ex}%
+                                   {\normalfont\normalsize\bfseries}}
+\renewcommand\paragraph{\@startsection{paragraph}{4}{0mm}%
+                                  {1ex \@plus1ex \@minus.2ex}%
+                                  {-1em}%
+                                  {\normalfont\normalsize\bfseries}}
+\renewcommand\subparagraph{\@startsection{subparagraph}{5}{\parindent}%
+                                     {2.0ex \@plus1ex \@minus .2ex}%
+                                     {-1em}%
+                                    {\normalfont\normalsize\bfseries}}
+\makeatother
+
+\newenvironment{proof}{{\bf Proof:  }}{\hfill\rule{2mm}{2mm}}
+\newenvironment{proofof}[1]{{\bf Proof of #1:  }}{\hfill\rule{2mm}{2mm}}
+\newenvironment{proofofnobox}[1]{{\bf#1:  }}{}
+\newenvironment{example}{{\bf Example:  }}{\hfill\rule{2mm}{2mm}}
+\renewcommand{\thesection}{\lecnum.\arabic{section}}
+
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+
+\newtheorem{fact}{Fact}[section]
+\newtheorem{lemma}[fact]{Lemma}
+\newtheorem{theorem}[fact]{Theorem}
+\newtheorem{definition}[fact]{Definition}
+\newtheorem{corollary}[fact]{Corollary}
+\newtheorem{proposition}[fact]{Proposition}
+\newtheorem{claim}[fact]{Claim}
+\newtheorem{exercise}[fact]{Exercise}
+
+% math notation
+\newcommand{\R}{\ensuremath{\mathbb R}}
+\newcommand{\Z}{\ensuremath{\mathbb Z}}
+\newcommand{\N}{\ensuremath{\mathbb N}}
+\newcommand{\F}{\ensuremath{\mathcal F}}
+\newcommand{\SymGrp}{\ensuremath{\mathfrak S}}
+\newcommand{\pr}{{\bf {\rm Pr}}}
+
+\newcommand{\CCP}{\ensuremath{\sf P}}
+\newcommand{\CCNP}{\ensuremath{\sf NP}}
+\newcommand{\C}{\ensuremath{\mathcal C}}
+
+\newcommand{\size}[1]{\ensuremath{\left|#1\right|}}
+\newcommand{\ceil}[1]{\ensuremath{\left\lceil#1\right\rceil}}
+\newcommand{\floor}[1]{\ensuremath{\left\lfloor#1\right\rfloor}}
+\newcommand{\poly}{\operatorname{poly}}
+\newcommand{\polylog}{\operatorname{polylog}}
+
+% some abbreviations
+\newcommand{\e}{\varepsilon}
+\newcommand{\half}{\ensuremath{\frac{1}{2}}}
+\newcommand{\junk}[1]{}
+\newcommand{\sse}{\subseteq}
+\newcommand{\union}{\cup}
+\newcommand{\meet}{\wedge}
+
+\newcommand{\prob}[1]{\ensuremath{\text{{\bf Pr}$\left[#1\right]$}}}
+\newcommand{\expct}[1]{\ensuremath{\text{{\bf E}$\left[#1\right]$}}}
+\newcommand{\Event}{{\mathcal E}}
+
+\newcommand{\mnote}[1]{\normalmarginpar \marginpar{\tiny #1}}
+
+\newcommand{\headings}[4]{
+\noindent
+\fbox{\parbox{\textwidth}{
+{\bf CS787: Advanced Algorithms} \hfill {{\bf Scribe:} #3}\\
+\vspace{0.02in}
+{{\bf Lecture #1:} #2} \hfill {{\bf Date:} #4}
+}}
+\vspace{0.2in}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document begins here %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\newcommand{\lecnum}{14}
+\headings{\lecnum}{Paging}{Jennifer Cao, Sihan Liu}{October 22, 2019}
+
+Last time we introduced online algorithm by conducting competitive analysis for two simple examples. For the {\em ski-rental problem}, a deterministic algorithm has a competitive ratio of $2$, while it can be improved by a roughly $\frac{e}{e-1}$-competitive randomized algorithm. Another one is {\em load balancing problem}, and we gave a $2$-competitive deterministic algorithm.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Paging Problem
+% 1. Definition
+% 2. Deterministic Algorithms
+% 3. k-competitive
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Paging Problem}
+In the computer system, there is a small fast memory(the ``cache") and a big slow memory(the ``disk")\cite{roughgarden2014cs2641}. Each time when a program sends read or write request to data on ``pages" in disk, it can be accessed directly when the page is also in the cache, which is a ``cache hit". Otherwise we have a ``cache miss", then we must fetch the upcoming page from the disk and put it in the cache, and a previous page in the cache needs to be evicted if the cache is already full. A ``cache miss" is also known as ``page fault". It's obvious that cache misses slow down a program because a page needs to be feched from a large slow memory. Hence the goal of paging is to minimize the number of cache misses.
+
+The {\em online paging problem} is described as following:
+
+Assume the disk has capacity of $N$ pages, and the cache has capacity of size $k<N$ pages at a time. Consider a {\em request sequence} of pages $a_1, a_2, ..., a_N$, and we do not know what page it is at the next time step, thus we can apply an online algorithm in this case. If the page is already in the cache, zero cost incurred. Otherwise, we need to bring $a_t$ into the cache, and evict one page out of the cache if it is full. In this case, one unit of cost is occurred.
+
+\section{Deterministic Algorithms}
+\subsection{Common Deterministic Algorithms}
+There are many common deterministic strategies for paging problem.
+\begin{itemize}
+	\item {\bf LRU(Least Recently Used)} Evict a page in the cache that has not been used for the longest time.
+	\item {\bf LFU(Least Frequently Used)} Evict a page in the cache that has been used least frequently.
+	\item {\bf FIFO(Fist In First Out)} Treat the cache as a queue. Each time when the cache is full, evict the head of the queue and enqueue the new page.
+\end{itemize}
+For example, consider a sequence $a, b, b, b, c, c, c, d, d, a, e, f$, and capacity of the cache is $k=4$. See Figure \ref{fig1}, at first $a$, $b$, $c$, $d$ are put into the cache successfully, as there are only four distinct pages before $e$ appears. To bring page $e$ into the cache, one prevous page must be evicted. At this time step, FIFO evicts $a$ as it is the head of current queue. LRU evicts $b$ because $b$ is the least recently used. While LFU kicks out $a$, which is used only twice and all other pages have been used three times.
+
+\[
+\begin{tabular}{|c|c|c|c|}
+\hline ${\bf a}$ & &     &\\
+\hline $a$ &  ${\bf b}$& &\\
+\hline $a$&${\bf b}$ &&  \\
+\hline $a$&${\bf b}$ &&  \\
+\hline $a$&$b$ &${\bf c}$&  \\
+\hline $a$&$b$ &${\bf c}$&  \\
+\hline $a$&$b$ &${\bf c}$&  \\
+\hline $a$&$b$ &$c$&${\bf d}$  \\
+\hline $a$&$b$ &$c$&${\bf d}$  \\
+\hline ${\bf a}$&$b$ &$c$&$d$  \\
+\hline
+\end{tabular}
+\]
+\[
+\downarrow
+\]
+\begin{table*}[!htbp]
+	\begin{floatrow}
+		\centering
+				\subcaptionbox*{\bf FIFO}{
+					\begin{tabular}{|c|c|c|c|}
+						\hline
+						{\bf e} & b & c & d \\
+						\hline
+						e & {\bf f} & c & d \\
+						\hline 
+					\end{tabular}
+				}
+				\subcaptionbox*{\bf LRU}{
+					\begin{tabular}{|c|c|c|c|}
+						\hline
+						a & {\bf e} & c & d \\
+						\hline
+						a & e & {\bf f} & d \\
+						\hline 
+					\end{tabular}
+				}
+				\subcaptionbox*{\bf LFU}{
+					\begin{tabular}{|c|c|c|c|}
+						\hline
+						{\bf e} & b & c & d \\
+						\hline
+						{\bf f} & b & c & d \\
+						\hline 
+					\end{tabular}
+				}
+			\caption{Comparison of FIFO, LRU, LFU strategies.}
+			\label{fig1}
+	\end{floatrow}
+\end{table*}
+
+\subsection{Competitive Analysis}
+Among above three strategies, LRU and FIFO are $k$-competitive, and LFU has an unbounded competitive ratio. 
+
+Before we start proving the competitive ratio of LRU and FIFO, let's first provide an example to see why LFU is not competitive. Assume a cache has contained page $1$ to page $k-1$, and all these pages has been requested for $m$ times. Then we only request page $k$ and page $k+1$ alternatively for $m$ times. In this case, LFU encounters $2m$ cache misses, because the strategy is kicking out page $k+1$ when requesting $k$, and kicking out page $k$ when requesting page $k+1$, as the frequency of both pages is less than $m$. Considering the optimum algorithm, it only has $1$ cache miss, which happens when requesting page $k+1$.
+
+% Lemma 1
+\begin{lemma}
+	LRU and FIFO are $k$-competitive\cite{sleator1985amortized}.
+	\label{lemma1}
+\end{lemma}
+
+First we need to define the denotion {\em phase}. Assume the request sequence is divided into phases $p_1, p_2, \dots$, each {\em phase} is a partition that consists of $k$-faults. Formally, phase $1$ begins at page $1$, and phase $i$ begins at the first time we see $k$ faults after phase $i-1$ has begun. 
+	
+\begin{claim}
+	For FIFO, phase $p_i$ contains $k$ distinct cache faults\cite{komm2016introduction}.
+	\label{claim1}
+\end{claim}
+
+\begin{proof}
+	Let $a$ be the first page that causes fault in $p_i$. Because the cache has capacity of size $k$, by FIFO we know that there are $k-1$ pages needs to be evicted before page $a$. Thus, to encounter a second cache miss caused by page $a$, $a$ needs to stay in the cache after $k-1$ distinct faults has happened.
+\end{proof}
+
+\begin{proofof}{Lemma \ref{lemma1}}
+	We need to prove that the optimum algorithm must make at least $1$ mistake in an arbitrary phase.
+	
+	For FIFO strategy, as Claim \ref{claim1} holds, OPT must have at least $1$ cache miss. That is because the cache cannot load both the last page in $p_{i-1}$ and all $k$ distinct pages in $p_i$.
+	
+	The proof of LRU is similar, but the claim above does not strictly hold in this case. The proof can be divided into two cases. When there are $k$ distinct cache misses during phase $p_i$, the proof is the same as the case in FIFO.
+	
+	If there is some page $a$ is missed twice during phase $p_i$, then $a$ must be put in and kicked out once before. At the first time when $a$ is put in, page $a$ is the most recently used page. Hence, when kicking out page $a$, there are $k-1$ pages in the cache has been requested after $a$ was put in. At the time when $a$ is evicted, there is another distinct page that is different from previous $k-1$ requests and page $a$, so there are $k+1$ distinct pages has been requested in phase $p_i$. Thus, every time there are $k+1$ distinct pages, OPT has at least one mistake.
+\end{proofof}
+
+
+% Lemma 2
+\begin{lemma}
+	No deterministic algorithm for paging is better than $k$-competitive, where $k$ is the size of the cache\cite{albers1996competitive}.
+	\label{lemma2}
+\end{lemma}
+
+\begin{proof}
+	Fix a deterministic online paging algorithm ALG and $k+1$ pages, and assume that there are $k$ pages in the cache. As we already know the replacement policy in ALG, an adversary can be constructed to request a page not in the cache at each step. Thus, ALG fails at all $T$ steps, where $T$ is the length of the adversary requests.
+	
+	Consider an offline greedy optimal strategy OPT. Suppose OPT encounters a mistake at step $t$, it evicts page that is not requested in the following $k-1$ steps. Thus, OPT has at most one cache miss in $k$ consecutive requests. For a request sequence of length $T$, OPT $\le \lceil \frac{T}{k} \rceil$. Therefore, ALG $=k\cdot \text{OPT} - \Theta(1)$.
+\end{proof}
+
+Lemma \ref{lemma2} implies that FIFO and LRU archieve the best competitive ratio for deterministic paging algorithm. However, randomized online algorithm can considerably beat $k$-competitive deterministic paging algorithms, and can give a tight competitive ratio of $\log k$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Marker Algorithm
+% 1. Randomized Algorithm
+% 2. $2H_k$-competitive
+% where $H_k=1+\frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{k}=\log k$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Randomized Algorithms}
+To illustrate the benefit of randomization, take the marking algorithm as an example.
+
+\subsection{The Marking Algorithm}
+Take every $k$ distinct pages as a phase. the online marking algorithm deals with a request sequence in phases. At the beginning of a phase, all pages are initialized as unmarked. Whenever a page is requested:
+\begin{enumerate}[itemindent=2em]
+	\item[{\bf step 1.}] Mark the page.
+	\item[{\bf step 2.}] If the page is not in the cache:
+	\begin{itemize}
+		\item[-] Randomly kick out an unmarked page from the cache.
+		\item[-] If all pages in the phase has been marked, clear all marks.
+	\end{itemize}
+\end{enumerate}
+
+\subsection{Competitive Analysis}
+\begin{lemma}[\cite{fiat1991competitive} Theorem 1]
+	The marking algorithm is $\log k$-competitive.
+\end{lemma}
+
+\begin{proof}
+	Consider an arbitrary phase $p_i$. Let set $S_i$ be the group of pages in the cache before phase $i$.
+	
+	Then in phase $i$, there are two types of pages:
+	\begin{enumerate}
+		\item[-] If page $a\in S_i$, call the page {\em clean};
+		\item[-] Otherwise, i.e., $a\notin S_i$, call the page {\em stale}.
+	\end{enumerate}
+
+	 
+	
+	\begin{enumerate}[itemindent=1em]
+		\item [{\bf ALG. }] First consider when we are using the marking algorithm, the expected number of cache misses during phase $i$. Let $c_i$ be the total number of clean pages in phase $i$, and suppose at time step $t$, we see $c$ clean pages and $s$ stale pages. The expected cost of the request is $\frac{c}{k-s}\le \frac{c_i}{k-s}$, as there are $c$ clean pages(not in the cache) distributed uniformly among $k-s$ remaining pages, and $c$ is bounded by $c_i$. Actually, the inequality shows that the sequence with the highest expected cost is the one which first request all the $c_i$ clean pages and then the stale pages. 
+		
+		As the number of stale pages in phase $p_i$ is $k-c_i$, The probability that a new stale page is missed at step $c_i+1$ is 
+		$$\prob{\text{a new stale page is missed at step $c_i+1$}}=\frac{\binom{k-1}{k-c_i}}{\binom{k}{k-c_i}}=\frac{c_i}{k}$$
+		The probability a new stale page is missed at step $c_i+2$ is
+		$$\prob{\text{a new stale page is missed at step $c_i+2$}}=\frac{\binom{k-2}{k-c_i-1}}{\binom{k-1}{k-c_i-1}}=\frac{c_i}{k-1}$$
+		By induction, the expected total cost $C(ALG)$ is the sum of expected cache misses of stale and clean pages:
+		$$C(ALG)=\frac{c_i}{k}+\frac{c_i}{k-1}+\frac{c_i}{k-2}+\dots+\frac{c_i}{c_i+1}+c_i\le c_iH_k=\Theta(c_i\log k)$$
+		Where $H_k=1+\frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{k}\approx\log k$.
+		
+		\item [{\bf OPT. }] To inspect the amortized number of faults made by OPT within a phase, let $\Phi_i$ denote the number of different pages OPT has before phase $p_i$, i.e., $\Phi_i=|S_i^{OPT}-S_i|$.
+		
+		First, we claim that the total cost $C(OPT)$ during phase $p_i$ is at least $c_i-\Phi_i$, where $c_i$ is the number of clean pages in phase $p_i$. That is because among all the clean pages, at most $\Phi_i$ has already been in the cache. Moreover, we know that there are at least $\Phi_{i+1}$ pages not in the cache at phase $i+1$ by definition, thus $C(OPT)\ge \Phi_{i+1}$.
+		
+		Thus, the total cost of OPT is
+		$$C(OPT)=\max{(c_i-\Phi_i, \Phi_{i+1})}\ge\frac{c_i-\Phi_i+\Phi_{i+1}}{2}$$
+		
+		When this is summed over all phases, the $\Phi_i$ and $\Phi_{i+1}$ telescope, and we get $$C(OPT)\ge \frac{1}{2}\sum{c_i}$$.
+	\end{enumerate}
+	Thus, we can conclude that marking algorithm is $\log k$-competitive.
+	
+	
+\end{proof}
+
+\bibliographystyle{IEEEtran}
+\bibliography{citation/cite}
+\end{document}
