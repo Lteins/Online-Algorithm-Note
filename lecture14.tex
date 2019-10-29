@@ -150,7 +150,7 @@ There are many common deterministic strategies for paging problem.
 	\item {\bf LFU(Least Frequently Used)} Evict a page in the cache that has been used least frequently.
 	\item {\bf FIFO(Fist In First Out)} Treat the cache as a queue. Each time when the cache is full, evict the head of the queue and enqueue the new page.
 \end{itemize}
-For example, consider a sequence $a, b, b, b, c, c, c, d, d, a, e, f$, and capacity of the cache is $k=4$. See Figure \ref{fig1}, at first $a$, $b$, $c$, $d$ are put into the cache successfully, as there are only four distinct pages before $e$ appears. To bring page $e$ into the cache, one prevous page must be evicted. At this time step, FIFO evicts $a$ as it is the head of current queue. LRU evicts $b$ because $b$ is the least recently used. While LFU kicks out $a$, which is used only twice and all other pages have been used three times.
+For example, consider a sequence $a, b, b, b, c, c, c, d, d, a, e, f$, and capacity of the cache is $k=4$. See Figure \ref{fig1}, at first $a$, $b$, $c$, $d$ are put into the cache successfully, as there are only four distinct pages before $e$ appears. To bring page $e$ into the cache, one previous page must be evicted. At this time step, FIFO evicts $a$ as it is the head of current queue. LRU evicts $b$ because $b$ is the least recently used. While LFU kicks out $a$, which is used only twice and all other pages have been used three times.
 
 \[
 \begin{tabular}{|c|c|c|c|}
@@ -203,7 +203,8 @@ For example, consider a sequence $a, b, b, b, c, c, c, d, d, a, e, f$, and capac
 			\caption{Comparison of FIFO, LRU, LFU strategies.}
 			\label{fig1}
 	\end{floatrow}
-\end{table*}
+\end{table*}
+
 
 \subsection{Competitive Analysis}
 Among above three strategies, LRU and FIFO are $k$-competitive, and LFU has an unbounded competitive ratio. 
@@ -216,7 +217,7 @@ Before we start proving the competitive ratio of LRU and FIFO, let's first provi
 	\label{lemma1}
 \end{lemma}
 
-First we need to define the denotion {\em phase}. Assume the request sequence is divided into phases $p_1, p_2, \dots$, each {\em phase} is a partition that consists of $k$-faults. Formally, phase $1$ begins at page $1$, and phase $i$ begins at the first time we see $k$ faults after phase $i-1$ has begun. 
+First we need to define the denotation {\em phase}. Assume the request sequence is divided into phases $p_1, p_2, \dots$, each {\em phase} is a partition that consists of $k$-faults. Formally, phase $1$ begins at page $1$, and phase $i$ begins at the first time we see $k$ faults after phase $i-1$ has begun. 
 	
 \begin{claim}
 	For FIFO, phase $p_i$ contains $k$ distinct cache faults\cite{komm2016introduction}.
@@ -282,8 +283,8 @@ Take every $k$ distinct pages as a phase. the online marking algorithm deals wit
 	
 	Then in phase $i$, there are two types of pages:
 	\begin{enumerate}
-		\item[-] If page $a\in S_i$, call the page {\em clean};
-		\item[-] Otherwise, i.e., $a\notin S_i$, call the page {\em stale}.
+		\item[-] If page $a\in S_i$, call the page {\em stale};
+		\item[-] Otherwise, i.e., $a\notin S_i$, call the page {\em clean}.
 	\end{enumerate}
 
 	 
@@ -291,17 +292,17 @@ Take every $k$ distinct pages as a phase. the online marking algorithm deals wit
 	\begin{enumerate}[itemindent=1em]
 		\item [{\bf ALG. }] First consider when we are using the marking algorithm, the expected number of cache misses during phase $i$. Let $c_i$ be the total number of clean pages in phase $i$, and suppose at time step $t$, we see $c$ clean pages and $s$ stale pages. The expected cost of the request is $\frac{c}{k-s}\le \frac{c_i}{k-s}$, as there are $c$ clean pages(not in the cache) distributed uniformly among $k-s$ remaining pages, and $c$ is bounded by $c_i$. Actually, the inequality shows that the sequence with the highest expected cost is the one which first request all the $c_i$ clean pages and then the stale pages. 
 		
-		As the number of stale pages in phase $p_i$ is $k-c_i$, The probability that a new stale page is missed at step $c_i+1$ is 
-		$$\prob{\text{a new stale page is missed at step $c_i+1$}}=\frac{\binom{k-1}{k-c_i}}{\binom{k}{k-c_i}}=\frac{c_i}{k}$$
+		The number of stale pages in phase $p_i$ is $k-c_i$. We then proceed to compute the cost/probability of missing all these stale pages.
+		$$\prob{\text{missing a stale page when we have seen 0 stale pages so far}=\frac{c_i}{k - 0}$$
 		The probability a new stale page is missed at step $c_i+2$ is
-		$$\prob{\text{a new stale page is missed at step $c_i+2$}}=\frac{\binom{k-2}{k-c_i-1}}{\binom{k-1}{k-c_i-1}}=\frac{c_i}{k-1}$$
+		$$\prob{\text{missing a stale page when we have seen 1 stale page so far}}=\frac{c_i}{k - 1}$$
 		By induction, the expected total cost $C(ALG)$ is the sum of expected cache misses of stale and clean pages:
 		$$C(ALG)=\frac{c_i}{k}+\frac{c_i}{k-1}+\frac{c_i}{k-2}+\dots+\frac{c_i}{c_i+1}+c_i\le c_iH_k=\Theta(c_i\log k)$$
 		Where $H_k=1+\frac{1}{2} + \frac{1}{3} + \dots + \frac{1}{k}\approx\log k$.
 		
 		\item [{\bf OPT. }] To inspect the amortized number of faults made by OPT within a phase, let $\Phi_i$ denote the number of different pages OPT has before phase $p_i$, i.e., $\Phi_i=|S_i^{OPT}-S_i|$.
 		
-		First, we claim that the total cost $C(OPT)$ during phase $p_i$ is at least $c_i-\Phi_i$, where $c_i$ is the number of clean pages in phase $p_i$. That is because among all the clean pages, at most $\Phi_i$ has already been in the cache. Moreover, we know that there are at least $\Phi_{i+1}$ pages not in the cache at phase $i+1$ by definition, thus $C(OPT)\ge \Phi_{i+1}$.
+		First, we claim that the total cost $C(OPT)$ during phase $p_i$ is at least $c_i-\Phi_i$, where $c_i$ is the number of clean pages in phase $p_i$. That is because among all the clean pages, at most $\Phi_i$ has already been in the cache. Moreover, we know that the Marking algorithm must have all requested pages in cache at the end of $p_i$ by definition and O.P.T must have had these pages at least at some point of $p_i$. If O.P.T has $\Phi_{i+1}$ pages different from Marking algorithm at the end of phase $p_i$, it must have evicted and therefore beared the cost of at least $\Phi_{i+1}$ pages. Thus, $C(OPT)\ge \Phi_{i+1}$.
 		
 		Thus, the total cost of OPT is
 		$$C(OPT)=\max{(c_i-\Phi_i, \Phi_{i+1})}\ge\frac{c_i-\Phi_i+\Phi_{i+1}}{2}$$
